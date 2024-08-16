@@ -1,7 +1,8 @@
 .DS_Store
 .thumbs.db
 node_modules
-
+# UML diagrams
+*.drawio
 # Quasar core related directories
 .quasar
 /dist
