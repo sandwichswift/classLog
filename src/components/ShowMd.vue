@@ -10,10 +10,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, computed, onUpdated } from 'vue';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css'; // 选择一个样式
+
 
 const markdownContent = ref('');
 
@@ -38,7 +39,7 @@ const compiledMarkdown = computed(() => {
   return marked(markdownContent.value, { renderer });
 });
 
-onMounted(() => {
+onUpdated(() => {// 监听更新
   fetchMarkdown();
 });
 </script>
@@ -60,16 +61,40 @@ onMounted(() => {
   }
 }
 
+.md-body h1 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-size: 3em;
+}
+
 .md-body h2 {
   margin-top: 1.5em;
   margin-bottom: 0.5em;
   font-size: 2.5em;
 }
 
-.md-body p {
+.md-body h3 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-size: 2em;
+}
+
+.md-body h4 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-size: 1.5em;
+}
+
+.md-body>p,
+li {
   margin-top: 1em;
   margin-bottom: 1em;
   font-size: 1.35em;
+  font-family: '微软雅黑', monospace, sans-serif;
+}
+
+.md-body>p>strong {
+  font-size: 1.5em;
   font-family: '微软雅黑', monospace, sans-serif;
 }
 </style>

@@ -8,77 +8,69 @@
           1918 Class Log
         </q-toolbar-title>
 
+        <!--用于转换暗黑模式的按钮-->
+        <q-btn aria-label="Dark theme toggle" flat round class="tw-ml-4"
+          :icon="$q.dark.isActive ? 'brightness_2' : 'brightness_5'" @click="$q.dark.toggle()"></q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
         <q-item-label header>
-          链接
+          Navigation
         </q-item-label>
 
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <MdLink v-for="md in mdList" :key="md.author" :author="md.author" :address="md.address" icon="person"
+          :changeMd="changeMd" />
       </q-list>
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <MdLayout :address="curAddress" />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
-
+import { onMounted, ref } from 'vue';
+import MdLink, { IMdLink } from 'src/components/MdLink.vue';
+import MdLayout from './MdLayout.vue';
 defineOptions({
   name: 'MainLayout'
 });
 
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+let curAddress = ref('src/assets/1.md');
+function changeMd(address: string) {
+  console.log(address);
+  curAddress.value = address;
+}
+
+const mdList: IMdLink[] = [];
+const baseUrl = 'src/assets/';
+
+
+async function fetchAuthors() {
+  const response = await fetch(baseUrl + 'author.md');
+  const text = await response.text();
+  const authors = text.split('\n').map(line => line.trim()).filter(line => line);
+
+  for (let i = 0; i < 34; i++) {
+    if (i < authors.length) {
+      let mdTmp = {
+        author: authors[i],
+        address: baseUrl + 'logs/' + (i + 1) + '.md',
+      }
+      mdList.push(mdTmp);
+    }
   }
-];
+}
+
+onMounted(() => {
+  fetchAuthors().then(() => {
+    curAddress.value = mdList[14].address;
+  });
+});
+
 
 const leftDrawerOpen = ref(false);
 

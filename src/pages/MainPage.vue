@@ -5,7 +5,7 @@
 * @date: 2024-08-15
 */
 <template>
-  <ShowMd address="src/assets/1.md" />
+  <ShowMd address="./README.md" />
 </template>
 
 <script lang="ts" setup name="">
